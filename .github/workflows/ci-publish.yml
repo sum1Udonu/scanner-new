@@ -4,7 +4,8 @@ on:
   push:
     branches: ['dev']
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, closed]
+    branches: ['dev']
 
 jobs:
   ci:
@@ -14,6 +15,8 @@ jobs:
     env:
       PUBLISH_PREFIX: ${{ vars.PUBLISH_PREFIX != '' && vars.PUBLISH_PREFIX || 'rosen-version:' }}
 
+    if: ${{ github.event_name == 'pull_request' || startsWith(github.event.head_commit.message, env.PUBLISH_PREFIX) }}
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
